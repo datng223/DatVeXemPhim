@@ -8,6 +8,7 @@ using Org.BouncyCastle.Security;
 using System.Text;
 using Mailgun;
 using DatVeXemPhim.Payloads.DataRequests.UserRequest;
+using DatVeXemPhim.Payloads.DataRequests.MailRequest;
 
 namespace DatVeXemPhim.Handle.Email
 {
@@ -26,6 +27,33 @@ namespace DatVeXemPhim.Handle.Email
 
             var bodyBuilder = new BodyBuilder();
             bodyBuilder.HtmlBody = $"<h1>Mã xác minh của bạn là: {verificationCode}, mã này có hiệu lực là 10 phút</h1>";
+            email.Body = bodyBuilder.ToMessageBody();
+
+            // Cấu hình SMTP
+            var smtpClient = new SmtpClient();
+            smtpClient.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+            smtpClient.Authenticate("tkodhunter@gmail.com", "xjcy lxsr ikdx miyu");
+
+            // Gửi email
+            await smtpClient.SendAsync(email);
+
+            // Giải phóng tài nguyên
+            smtpClient.Dispose();
+        }
+
+        public async Task SendMail(EmailTo emailTo)
+        {
+
+            // Chuẩn bị email
+            var email = new MimeMessage();
+            email.From.Add(new MailboxAddress("Beta cinemas", "tkodhunter@gmail.com"));
+            email.To.Add(new MailboxAddress("Bạn", emailTo.To));
+            email.Subject = emailTo.Subject;
+
+            // Thêm nội dung email
+
+            var bodyBuilder = new BodyBuilder();
+            bodyBuilder.HtmlBody = emailTo.Content;
             email.Body = bodyBuilder.ToMessageBody();
 
             // Cấu hình SMTP

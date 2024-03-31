@@ -1,6 +1,4 @@
-﻿using DatVeXemPhim.Entities;
-
-namespace DatVeXemPhim.Payloads.DataRequests.CinemaRequest
+﻿namespace DatVeXemPhim.Payloads.DataRequests.CinemaRequest
 {
     public class Request_EditCinema
     {
@@ -9,5 +7,6 @@ namespace DatVeXemPhim.Payloads.DataRequests.CinemaRequest
         public string Description  { get; set; }
         public string Code         { get; set; }
         public string NameOfCinema { get; set; }
+        public bool? IsActive { get; set; }
     }   
 }

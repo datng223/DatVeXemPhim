@@ -1,15 +1,40 @@
 using DatVeXemPhim.DataContext;
 using DatVeXemPhim.Handle.Email;
+using DatVeXemPhim.Payloads.Converters;
+using DatVeXemPhim.Payloads.DataResponses;
+using DatVeXemPhim.Payloads.Responses;
 using DatVeXemPhim.Services.Implements;
 using DatVeXemPhim.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 // Add services to the container.
-builder.Services.AddScoped<IUserService, UserService>();
+services.AddScoped<IUserService, UserService>();
+services.AddScoped<IRoomService, RoomService>();
+services.AddScoped<ICinemaService, CinemaService>();
+services.AddScoped<ISeatService, SeatService>();
+services.AddScoped<IMovieService, MovieService>();
+services.AddScoped<IFoodService, FoodService>();
+services.AddScoped<IScheduleService, ScheduleService>();
+
+services.AddScoped<RoomConverter>();
+services.AddScoped<SeatConverter>();
+services.AddScoped<MovieConverter>();
+services.AddScoped<FoodConverter>();
+services.AddScoped<CinemaConverter>();
+services.AddScoped<ScheduleConverter>();
+
+services.AddScoped<ResponseObject<DataResponseCinema>>();
+services.AddScoped<ResponseObject<DataResponseSeat>>();
+services.AddScoped<ResponseObject<DataResponseMovie>>();
+services.AddScoped<ResponseObject<DataResponseFood>>();
+services.AddScoped<ResponseObject<DataResponseRoom>>();
+services.AddScoped<ResponseObject<DataResponseSchedule>>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -36,8 +61,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 services.AddSingleton<IEmailService, EmailServices>();
-
-//services.AddDbContext<AppDbContext>(c => c.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
+/*
+services.AddDbContext<AppDbContext>(c => c.UseSqlServer(builder.Configuration.GetConnectionString("DB")));*/
 
 var app = builder.Build();
 
