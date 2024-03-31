@@ -13,9 +13,14 @@ namespace DatVeXemPhim.Services.Implements
     {
         private readonly ResponseObject<DataResponseRoom> _responseObject;
         private readonly RoomConverter _converter;
-        public RoomService(RoomConverter converter)
+        private readonly CinemaConverter _cinemaConverter;
+        private readonly SeatConverter _seatConverter;
+        private readonly ScheduleConverter _scheduleConverter;
+        public RoomService(RoomConverter roomConverter, SeatConverter seatConverter, ScheduleConverter scheduleConverter)
         {
-            _converter = converter;
+            _converter = roomConverter;
+            _seatConverter = seatConverter;
+            _scheduleConverter = scheduleConverter;
             _responseObject = new ResponseObject<DataResponseRoom>();
         }
 
@@ -39,7 +44,6 @@ namespace DatVeXemPhim.Services.Implements
         {
             try
             {
-                int number;
                 if (request.Capacity <= 0 || string.IsNullOrWhiteSpace(request.Description) || request.Code == null || request.CinemaId == null || request.Name == null)
                 {
                     return _responseObject.ResponseError(StatusCodes.Status400BadRequest, "Vui lòng điền đầy đủ thông tin");
@@ -52,6 +56,7 @@ namespace DatVeXemPhim.Services.Implements
                     CinemaId = request.CinemaId,
                     Code = request.Code,
                     Name = request.Name,
+                    IsActive = request.IsActive,
     };
                 _context.rooms.Add(room);
                 _context.SaveChanges();
@@ -78,6 +83,7 @@ namespace DatVeXemPhim.Services.Implements
                 room.CinemaId = request.CinemaId;
                 room.Code = request.Code;
                 room.Name = request.Name;
+                room.IsActive = request.IsActive;
                 _context.rooms.Update(room);
                 _context.SaveChanges();
                 return _responseObject.ResponseSuccess("Cập nhật thông tin phòng thành công", _converter.EntityToDTO(room));
@@ -105,6 +111,15 @@ namespace DatVeXemPhim.Services.Implements
             {
                 return "Error: " + ex.Message;
             }
+        }
+
+        public async Task<List<DataResponseRoom>> GetRoomsByMovie(int movieId, int cinemaId)
+        {
+            var rooms = _context.rooms
+                .Where(room => room.CinemaId == cinemaId && room.schedules.Any(schedule => schedule.MovieId == movieId))
+                .ToList();
+            var responseRooms = rooms.Select(x => _converter.EntityToDTO(x)).ToList();
+            return responseRooms;
         }
     }
 }

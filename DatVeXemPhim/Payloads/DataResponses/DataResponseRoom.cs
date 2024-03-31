@@ -1,6 +1,4 @@
-﻿using DatVeXemPhim.Entities;
-
-namespace DatVeXemPhim.Payloads.DataResponses
+﻿namespace DatVeXemPhim.Payloads.DataResponses
 {
     public class DataResponseRoom
     {
@@ -12,8 +10,7 @@ namespace DatVeXemPhim.Payloads.DataResponses
         public string                 Code { get; set; }
         public string                 Name { get; set; }
         public bool?                  IsActive { get; set; } = true;
-        public DataResponseCinema?    Cinema { get; set; }
-        public IEnumerable<Seat>?     seats { get; set; }
-        public IEnumerable<Schedule>? schedules { get; set; }
+        public IEnumerable<DataResponseSeat>?     seats { get; set; }
+        public IEnumerable<DataResponseSchedule>? schedules { get; set; }
     }
 }
